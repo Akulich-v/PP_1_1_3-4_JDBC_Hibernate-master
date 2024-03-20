@@ -9,8 +9,9 @@ import java.util.List;
 
 
 public class UserDaoJDBCImpl implements UserDao {
+    Util util = new Util();
 
-    Connection connection = Util.getConnection();
+    Connection connection = util.getConnection();
 
 
     public UserDaoJDBCImpl() {
@@ -27,9 +28,10 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.executeUpdate();
+            System.out.println("Создание таблицы выполнено");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
+        } /*finally {
             if(preparedStatement != null) {
                 try {
                     connection.close();
@@ -37,7 +39,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     throw new RuntimeException(e);
                 }
             }
-        }
+        }*/
 
 
     }
@@ -45,15 +47,16 @@ public class UserDaoJDBCImpl implements UserDao {
     public void dropUsersTable() {
         //Удаление таблицы
         PreparedStatement preparedStatement = null;
-        String sql = "drop table mybdtwst";
+        String sql = "drop table if exists mybdtwst";
 
         try {
             preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.executeUpdate();
+            System.out.println("Удаление таблицы выполнено");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
+        } /*finally {
             if(preparedStatement != null) {
                 try {
                     connection.close();
@@ -61,7 +64,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     throw new RuntimeException(e);
                 }
             }
-        }
+        }*/
     }
 
     public void saveUser(String name, String lastName, byte age) {
@@ -77,9 +80,10 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setByte(3,age);
 
             preparedStatement.executeUpdate();
+            System.out.println("Пользователь добавлен");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
+        } /*finally {
             if(preparedStatement != null) {
                 try {
                     connection.close();
@@ -87,7 +91,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     throw new RuntimeException(e);
                 }
             }
-        }
+        }*/
     }
 
     public void removeUserById(long id) {
@@ -101,9 +105,10 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.setLong(1,id);
 
             preparedStatement.executeUpdate();
+            System.out.println("Пользователь удалён");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
+        } /*finally {
             if(preparedStatement != null) {
                 try {
                     connection.close();
@@ -111,7 +116,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     throw new RuntimeException(e);
                 }
             }
-        }
+        }*/
 
     }
 
@@ -119,7 +124,7 @@ public class UserDaoJDBCImpl implements UserDao {
         //Получение всех Юзеров из таблицы
         List<User> usersList = new ArrayList<>();
         Statement statement = null;
-        String sql = "Select id, name, lastName, age";
+        String sql = "Select id, name, lastName, age FROM mybdtwst";
 
         try {
             statement = connection.createStatement();
@@ -134,10 +139,12 @@ public class UserDaoJDBCImpl implements UserDao {
                 user.setAge(resultSet.getByte("age"));
 
                 usersList.add(user);
+                System.out.println(usersList.toString());
             }
+            System.out.println("Выведены все юзеры");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
+        } /*finally {
             if(statement != null) {
                 try {
                     connection.close();
@@ -145,7 +152,7 @@ public class UserDaoJDBCImpl implements UserDao {
                     throw new RuntimeException(e);
                 }
             }
-        }
+        }*/
         return usersList;
     }
 
@@ -159,9 +166,10 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.executeUpdate();
+            System.out.println("Данные таблицы удалены");
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } finally {
+        } /*finally {
             if(preparedStatement != null) {
                 try {
                     connection.close();
@@ -169,6 +177,6 @@ public class UserDaoJDBCImpl implements UserDao {
                     throw new RuntimeException(e);
                 }
             }
-        }
+        }*/
     }
 }

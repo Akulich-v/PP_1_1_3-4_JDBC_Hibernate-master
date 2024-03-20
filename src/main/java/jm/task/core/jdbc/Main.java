@@ -8,9 +8,10 @@ import jm.task.core.jdbc.util.Util;
 
 public class Main {
     public static void main(String[] args) {
-        Util.getConnection();
+        Util util = new Util();
+        util.getConnection();
         UserDao userDao = new UserDaoJDBCImpl();
-
+        userDao.dropUsersTable();
         userDao.createUsersTable();
 
         userDao.saveUser("Name1", "LastName1", (byte) 20);
@@ -22,8 +23,5 @@ public class Main {
         userDao.getAllUsers();
         userDao.cleanUsersTable();
         userDao.dropUsersTable();
-
-
-
     }
 }
