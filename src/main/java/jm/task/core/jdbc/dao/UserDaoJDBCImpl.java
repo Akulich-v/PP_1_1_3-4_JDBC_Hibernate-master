@@ -92,7 +92,6 @@ public class UserDaoJDBCImpl implements UserDao {
         return usersList;
     }
 
-
     public void cleanUsersTable() {
         //Очистка содержания таблицы
         String sql = "Delete from mybdtwst";
