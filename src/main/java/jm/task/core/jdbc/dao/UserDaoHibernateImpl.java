@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +23,9 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void createUsersTable() {
         SessionFactory sessionFactory = util.getSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
 
-        try {
+
+        try (Session session = sessionFactory.getCurrentSession()) {
             session.beginTransaction();
 
             String sql = "CREATE TABLE IF NOT EXISTS mybdtwst " +
@@ -36,8 +37,8 @@ public class UserDaoHibernateImpl implements UserDao {
             query.executeUpdate();
 
             session.getTransaction().commit();
-        } finally {
-            session.close();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
         }
 
     }
@@ -45,8 +46,8 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void dropUsersTable() {
         SessionFactory sessionFactory = util.getSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
-        try {
+
+        try (Session session = sessionFactory.getCurrentSession()) {
             session.beginTransaction();
 
             String sql = "DROP TABLE IF EXISTS mybdtwst";
@@ -54,8 +55,8 @@ public class UserDaoHibernateImpl implements UserDao {
             query.executeUpdate();
 
             session.getTransaction().commit();
-        } finally {
-            session.close();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
         }
     }
 
@@ -63,8 +64,7 @@ public class UserDaoHibernateImpl implements UserDao {
     public void saveUser(String name, String lastName, byte age) {
         User user = new User();
         SessionFactory sessionFactory = util.getSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
-        try {
+        try (Session session = sessionFactory.getCurrentSession()) {
             session.beginTransaction();
 
             user.setName(name);
@@ -73,43 +73,37 @@ public class UserDaoHibernateImpl implements UserDao {
             session.persist(user);
 
             session.getTransaction().commit();
-        } finally {
-            System.out.println(user);
-            session.close();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        User user = new User();
         SessionFactory sessionFactory = util.getSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
-        try {
+        try (Session session = sessionFactory.getCurrentSession()) {
             session.beginTransaction();
 
             User userToDelete = session.find(User.class,id);
             session.remove(userToDelete);
 
             session.getTransaction().commit();
-
-        } finally {
-            session.close();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public List<User> getAllUsers() {
-        User user = new User();
         SessionFactory sessionFactory = util.getSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
         List<User> usersList = new ArrayList<>();
 
-        try {
+        try (Session session = sessionFactory.getCurrentSession()) {
             session.beginTransaction();
             usersList = session.createQuery("FROM User", User.class).list();
             session.getTransaction().commit();
-        } finally {
-            session.close();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
         }
 
         return usersList;
@@ -117,17 +111,18 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        User user = new User();
         SessionFactory sessionFactory = util.getSessionFactory();
-        Session session = sessionFactory.getCurrentSession();
-        session.beginTransaction();
+        try (Session session = sessionFactory.getCurrentSession()) {
+            session.beginTransaction();
 
             String hql = "DELETE FROM User";
 
             Query query = session.createQuery(hql);
             query.executeUpdate();
 
-        session.getTransaction().commit();
-        session.close();
+            session.getTransaction().commit();
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
     }
 }
